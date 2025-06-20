@@ -1,0 +1,23 @@
+
+
+//Query 3
+
+[
+  {
+    $addFields: {
+      cumple_rapido: {
+        $function: {
+          body: "function(eventos) { if (!eventos || eventos.length < 4) return false; eventos = eventos.map(e => new Date(e.timestamp)); for (let i = 0; i <= eventos.length - 4; i++) { let inicio = eventos[i]; let fin = eventos[i + 3]; let diffMin = (fin - inicio) / (1000 * 60); if (diffMin <= 10) return true; } return false; }",
+          args: ["$eventos"],
+          lang: "js"
+        }
+      }
+    }
+  },
+  {
+    $match: { cumple_rapido: true }
+  },
+  {
+    $count: "pedidos_con_cambios_rapidos"
+  }
+]
