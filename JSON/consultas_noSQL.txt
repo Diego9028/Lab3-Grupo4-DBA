@@ -21,3 +21,71 @@
     $count: "pedidos_con_cambios_rapidos"
   }
 ]
+
+
+//Query 4
+
+[
+  {
+    "$unwind": "$rutas"
+  },
+  {
+    "$match": {
+      "rutas.timestamp": {
+        "$gte": "2025-06-13T00:00:00Z"
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$_id",
+      "repartidor_id": { "$first": "$repartidor_id" },
+      "rutas": { "$push": "$rutas" }
+    }
+  },
+  {
+    "$project": {
+      "repartidor_id": 1,
+      "tramos": {
+        "$map": {
+          "input": {
+            "$range": [
+              0,
+              { "$subtract": [ { "$size": "$rutas" }, 1 ] }
+            ]
+          },
+          "as": "i",
+          "in": {
+            "origen": {
+              "lat": { "$arrayElemAt": [ "$rutas.lat", "$$i" ] },
+              "lng": { "$arrayElemAt": [ "$rutas.lng", "$$i" ] }
+            },
+            "destino": {
+              "lat": { "$arrayElemAt": [ "$rutas.lat", { "$add": ["$$i", 1] } ] },
+              "lng": { "$arrayElemAt": [ "$rutas.lng", { "$add": ["$$i", 1] } ] }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "$unwind": "$tramos"
+  },
+  {
+    "$group": {
+      "_id": {
+        "origen": "$tramos.origen",
+        "destino": "$tramos.destino"
+      },
+      "frecuencia": { "$sum": 1 }
+    }
+  },
+  {
+    "$sort": { "frecuencia": -1 }
+  },
+  {
+    "$limit": 10
+  }
+]
+
