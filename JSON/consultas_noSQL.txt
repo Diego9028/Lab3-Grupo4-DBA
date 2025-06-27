@@ -89,3 +89,29 @@
   }
 ]
 
+
+// Query 6
+
+[
+  {
+    $addFields: {
+      hora_dia: {
+        $hour: {
+          date: { $toDate: "$fecha" },
+          timezone: "America/Santiago"
+        }
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$hora_dia",
+      total_opiniones: { $sum: 1 },
+      promedio_puntuacion: { $avg: "$puntuacion" },
+      comentarios: { $push: "$comentario" }
+    }
+  },
+  {
+    $sort: { _id: 1 }
+  }
+]
