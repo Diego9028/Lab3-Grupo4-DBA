@@ -52,8 +52,11 @@
   },
   {
     "$match": {
-      "rutas.timestamp": {
-        "$gte": "2025-06-13T00:00:00Z"
+      "$expr": {
+        "$gte": [
+          { "$dateFromString": { "dateString": "$rutas.timestamp" } },
+          { "$dateSubtract": { "startDate": "$$NOW", "unit": "day", "amount": 7 } }
+        ]
       }
     }
   },
