@@ -1,0 +1,7 @@
+/Backend/target
+/Backend/.idea
+/Backend/target
+*.properties
+Backend/src/main/resources/application.properties
+Backend/.env
+Backend/target/classes/delivery/demo/controllers/OpinionesClientesController.class

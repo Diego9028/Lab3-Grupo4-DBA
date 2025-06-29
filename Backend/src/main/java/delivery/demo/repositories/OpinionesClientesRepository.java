@@ -22,6 +22,7 @@ public class OpinionesClientesRepository {
         this.mongoTemplate = mongoTemplate;
     }
 
+
     public List<Document> opinionesPorHoraDelDia() {
         AggregationOperation addFields = context -> new Document("$addFields",
                 new Document("hora_dia",

@@ -1,6 +1,7 @@
 package delivery.demo.controllers;
 
 import delivery.demo.repositories.OpinionesClientesRepository;
+import delivery.demo.services.OpinionesClientesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.bson.Document;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,7 +18,8 @@ import java.util.List;
 public class OpinionesClientesController {
 
     @Autowired
-    OpinionesClientesRepository opinionesClientesService;
+    OpinionesClientesService opinionesClientesService;
+
 
     @GetMapping("/hora-dia")
     public List<Document> obtenerOpinionesPorHoraDelDia() {
