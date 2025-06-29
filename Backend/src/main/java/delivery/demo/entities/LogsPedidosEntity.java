@@ -14,6 +14,6 @@ public class LogsPedidosEntity {
     private List<Evento> eventos;
     public static class Evento {
         private String estado;
-        private Instant timestamp;
+        private String timestamp;
     }
 }

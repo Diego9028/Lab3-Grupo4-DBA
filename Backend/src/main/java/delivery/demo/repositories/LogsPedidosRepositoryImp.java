@@ -21,7 +21,6 @@ public class LogsPedidosRepositoryImp {
     }
 
     public long contarPedidosConCambiosRapidos() {
-        // $addFields con $function para calcular "cumple_rapido"
         Document functionStage = new Document("$addFields",
                 new Document("cumple_rapido",
                         new Document("$function", new Document()
@@ -42,13 +41,10 @@ public class LogsPedidosRepositoryImp {
                 )
         );
 
-        // $match para filtrar los que cumplen
         AggregationOperation matchStage = context -> new Document("$match", new Document("cumple_rapido", true));
 
-        // $count para contar los pedidos válidos
         AggregationOperation countStage = context -> new Document("$count", "pedidos_con_cambios_rapidos");
 
-        // Ejecutar la agregación
         Aggregation aggregation = Aggregation.newAggregation(
                 context -> functionStage,
                 matchStage,
