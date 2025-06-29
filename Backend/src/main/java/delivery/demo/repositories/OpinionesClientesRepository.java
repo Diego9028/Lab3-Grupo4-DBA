@@ -54,4 +54,21 @@ public class OpinionesClientesRepository {
 
         return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
     }
+
+    public List<Document> opinionesConProblemasDetectados() {
+        // Expresión regular que detecta variantes, sinónimos y errores comunes de escritura
+        String regexProblemas = "(?i)(demora|demoro|demor[óo]|tardanza|retardo|espera|error|errores|err[oó]r|conflicto|fall[oó]s?)";
+
+        AggregationOperation matchProblemas = context -> new Document("$match",
+                new Document("comentario", new Document("$regex", regexProblemas))
+        );
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchProblemas,
+                Aggregation.project("cliente_id", "empresa_id", "comentario", "puntuacion", "fecha")
+        );
+
+        return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
+    }
+
 }
