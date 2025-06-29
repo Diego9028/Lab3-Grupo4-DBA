@@ -42,4 +42,15 @@ public class OpinionesClientesRepository {
 
         return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
     }
+
+    public List<Document> promedioPuntuacionPorEmpresa() {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group("empresa_id")
+                        .avg("puntuacion").as("promedio_puntuacion")
+                        .count().as("total_opiniones"),
+                Aggregation.sort(Sort.by("_id"))
+        );
+
+        return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
+    }
 }

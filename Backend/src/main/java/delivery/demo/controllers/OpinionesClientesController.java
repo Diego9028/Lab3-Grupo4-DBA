@@ -23,4 +23,10 @@ public class OpinionesClientesController {
     public List<Document> obtenerOpinionesPorHoraDelDia() {
         return opinionesClientesService.opinionesPorHoraDelDia();
     }
+
+    @GetMapping("/promedio-empresa")
+    public List<Document> obtenerPromedioPuntuacionPorEmpresa() {
+        return opinionesClientesService.promedioPuntuacionPorEmpresa();
+    }
+
 }

@@ -14,4 +14,8 @@ public class OpinionesClientesService {
     public List<Document> opinionesPorHoraDelDia() {
         return opinionesClientesRepository.opinionesPorHoraDelDia();
     }
+
+    public List<Document> promedioPuntuacionPorEmpresa() {
+        return opinionesClientesRepository.promedioPuntuacionPorEmpresa();
+    }
 }
