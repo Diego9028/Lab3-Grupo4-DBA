@@ -13,5 +13,5 @@ public class OpinionesClientesEntity {
     private int empresa_id;
     private String comentario;
     private int puntuacion;
-    private Instant fecha;
+    private String fecha;
 }
