@@ -37,15 +37,37 @@ public class HistorialRepartidoresRepository {
                 Aggregation.group("_id")
                         .first("repartidor_id").as("repartidor_id")
                         .push("rutas").as("rutas"),
-                Aggregation.project("repartidor_id")
-                        .andExpression("{ $map: { input: { $range: [0, { $subtract: [ { $size: '$rutas' }, 1 ] }] }, as: 'i', in: { origen: { lat: { $arrayElemAt: ['$rutas.lat', '$$i'] }, lng: { $arrayElemAt: ['$rutas.lng', '$$i'] } }, destino: { lat: { $arrayElemAt: ['$rutas.lat', { $add: ['$$i', 1] }] }, lng: { $arrayElemAt: ['$rutas.lng', { $add: ['$$i', 1] }] } } } } }")
-                        .as("tramos"),
+                // 👇 esta es la etapa clave modificada
+                (context -> Document.parse("""
+        {
+          $project: {
+            repartidor_id: 1,
+            tramos: {
+              $map: {
+                input: { $range: [0, { $subtract: [ { $size: "$rutas" }, 1 ] }] },
+                as: "i",
+                in: {
+                  origen: {
+                    lat: { $arrayElemAt: ["$rutas.lat", "$$i"] },
+                    lng: { $arrayElemAt: ["$rutas.lng", "$$i"] }
+                  },
+                  destino: {
+                    lat: { $arrayElemAt: ["$rutas.lat", { $add: ["$$i", 1] }] },
+                    lng: { $arrayElemAt: ["$rutas.lng", { $add: ["$$i", 1] }] }
+                  }
+                }
+              }
+            }
+          }
+        }
+        """)),
                 Aggregation.unwind("tramos"),
                 Aggregation.group("tramos.origen", "tramos.destino")
                         .count().as("frecuencia"),
                 Aggregation.sort(Sort.by(Sort.Direction.DESC, "frecuencia")),
                 Aggregation.limit(10)
         );
+
         return mongoTemplate.aggregate(aggregation, "historial_repartidores", Document.class).getMappedResults();
     }
 }
