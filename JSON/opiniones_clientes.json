@@ -23,7 +23,7 @@
   {
     "cliente_id": 4,
     "empresa_id": 4,
-    "comentario": "Se demoró más de lo esperado.",
+    "comentario": "Se demora más de lo esperado.",
     "puntuacion": 2,
     "fecha": "2025-06-08T12:15:00Z"
   },
@@ -37,7 +37,7 @@
   {
     "cliente_id": 11,
     "empresa_id": 1,
-    "comentario": "Todo bien, pero el seguimiento del pedido fue confuso.",
+    "comentario": "Todo bien, pero el seguimiento del pedido tuvo un error.",
     "puntuacion": 3,
     "fecha": "2025-06-15T14:10:00Z"
   },
