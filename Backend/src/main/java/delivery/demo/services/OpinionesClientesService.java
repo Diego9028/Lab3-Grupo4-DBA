@@ -24,4 +24,7 @@ public class OpinionesClientesService {
     public List<Document> promedioPuntuacionPorEmpresa() {
         return opinionesClientesRepository.promedioPuntuacionPorEmpresa();
     }
+    public List<Document> opinionesConProblemasDetectados() {
+        return opinionesClientesRepository.opinionesConProblemasDetectados();
+    }
 }

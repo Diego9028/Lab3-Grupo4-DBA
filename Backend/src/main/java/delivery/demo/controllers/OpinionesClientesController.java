@@ -31,4 +31,9 @@ public class OpinionesClientesController {
         return opinionesClientesService.promedioPuntuacionPorEmpresa();
     }
 
+    @GetMapping("/problemas-detectados")
+    public List<Document> obtenerOpinionesConProblemasDetectados() {
+        return opinionesClientesService.opinionesConProblemasDetectados();
+    }
+
 }
