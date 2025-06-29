@@ -3,7 +3,6 @@ package delivery.demo.entities;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
 import java.util.List;
 
 @Document("historial_repartidores")
@@ -15,6 +14,6 @@ public class HistorialRepartidoresEntity {
     public static class Ruta {
         private double lat;
         private double lng;
-        private Instant timestamp;
+        private String timestamp;
     }
 }
