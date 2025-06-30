@@ -56,7 +56,6 @@ public class OpinionesClientesRepository {
     }
 
     public List<Document> opinionesConProblemasDetectados() {
-        // Expresión regular que detecta variantes, sinónimos y errores comunes de escritura
         String regexProblemas = "(?i)(demora|demoro|demor[óo]|tardanza|retardo|espera|error|errores|err[oó]r|conflicto|fall[oó]s?)";
 
         AggregationOperation matchProblemas = context -> new Document("$match",

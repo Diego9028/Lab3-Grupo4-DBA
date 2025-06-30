@@ -21,12 +21,11 @@ public class NavegacionUsuariosRepositoryImp {
     }
 
     public List<Integer> obtenerClientesQueBuscaronPeroNoCompraron() {
-        // 1. Filtrar clientes que tienen al menos un evento de tipo "busqueda"
+
         AggregationOperation matchBusqueda = context -> new Document("$match",
                 new Document("eventos", new Document("$elemMatch", new Document("tipo", "busqueda")))
         );
 
-        // 2. Añadir campo "tiene_pedido_confirmado": ¿existe algún evento con tipo = "pedido" y valor = "confirmar"?
         AggregationOperation addTienePedidoConfirmado = context -> new Document("$addFields",
                 new Document("tiene_pedido_confirmado",
                         new Document("$anyElementTrue", List.of(
@@ -42,12 +41,10 @@ public class NavegacionUsuariosRepositoryImp {
                 )
         );
 
-        // 3. Filtrar los que NO tienen pedidos confirmados
         AggregationOperation matchSinPedidoConfirmado = context -> new Document("$match",
                 new Document("tiene_pedido_confirmado", false)
         );
 
-        // 4. Proyectar solo el cliente_id
         AggregationOperation projectClienteId = context -> new Document("$project",
                 new Document("cliente_id", 1).append("_id", 0)
         );

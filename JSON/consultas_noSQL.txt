@@ -113,6 +113,50 @@
   }
 ]
 
+// Query 5
+
+[
+  {
+    "$match": {
+      "eventos": {
+        "$elemMatch": {
+          "tipo": "busqueda"
+        }
+      }
+    }
+  },
+  {
+    "$addFields": {
+      "tiene_pedido_confirmado": {
+        "$anyElementTrue": {
+          "$map": {
+            "input": "$eventos",
+            "as": "e",
+            "in": {
+              "$and": [
+                { "$eq": ["$$e.tipo", "pedido"] },
+                { "$eq": ["$$e.valor", "confirmar"] }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "$match": {
+      "tiene_pedido_confirmado": false
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "cliente_id": 1
+    }
+  }
+]
+
+
 
 // Query 6
 
