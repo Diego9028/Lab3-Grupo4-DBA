@@ -30,10 +30,8 @@ public class EmpresaAsociadaRepositoryImp {
                       DETALLE_PEDIDO dp ON dp.id_detalle_pedido = p.id_detalle_pedido
                     WHERE 
                       dp.entregado = FALSE
-                     AND ea.deleted_at IS NULL
                     AND r.deleted_at IS NULL
                     AND p.deleted_at IS NULL
-                    AND dp.deleted_at IS NULL
                     GROUP BY 
                       ea.id_empresa_asociada, ea.nombre
                     ORDER BY 
@@ -63,10 +61,8 @@ public class EmpresaAsociadaRepositoryImp {
                       DETALLE_PEDIDO dp ON dp.id_detalle_pedido = p.id_detalle_pedido
                     WHERE 
                       dp.entregado = TRUE
-                    AND ea.deleted_at IS NULL
                     AND r.deleted_at IS NULL
                     AND p.deleted_at IS NULL
-                    AND dp.deleted_at IS NULL
                     GROUP BY 
                       ea.id_empresa_asociada, ea.nombre
                     ORDER BY 

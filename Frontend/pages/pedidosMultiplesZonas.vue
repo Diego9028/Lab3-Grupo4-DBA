@@ -29,6 +29,11 @@
 </template>
 
 <script setup>
+// Configurar middleware de autenticación
+definePageMeta({
+  middleware: 'auth'
+})
+
 import { ref, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
 

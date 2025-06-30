@@ -32,8 +32,6 @@ public class UrgenciaRepositoryImp {
             WHERE\s
               u.tipo = 'Alta'
             AND p.deleted_at IS NULL
-            AND u.deleted_at IS NULL
-            AND mp.deleted_at IS NULL
             GROUP BY\s
               mp.id_medio_pago, mp.tipo
             ORDER BY\s
@@ -69,8 +67,7 @@ public class UrgenciaRepositoryImp {
         String sql = """
             UPDATE URGENCIA
             SET tipo = :tipo
-            WHERE id_urgencia = :id_urgencia
-            AND deleted_at IS NULL;
+            WHERE id_urgencia = :id_urgencia;
         """;
         try (org.sql2o.Connection con = sql2o.open()) {
             con.createQuery(sql)
@@ -83,8 +80,7 @@ public class UrgenciaRepositoryImp {
     // Obtener todas las urgencias
     public List<UrgenciaEntity> getAll() {
         String sql = """
-            SELECT * FROM URGENCIA
-            WHERE deleted_at IS NULL;
+            SELECT * FROM URGENCIA;
         """;
         try (org.sql2o.Connection con = sql2o.open()) {
             return con.createQuery(sql)
@@ -97,8 +93,7 @@ public class UrgenciaRepositoryImp {
         String sql = """
             UPDATE URGENCIA
             SET deleted_at = NOW()
-            WHERE id_urgencia = :id_urgencia
-              AND deleted_at IS NULL;
+            WHERE id_urgencia = :id_urgencia;
         """;
         try (org.sql2o.Connection con = sql2o.open()) {
             con.createQuery(sql)

@@ -1,4 +1,5 @@
 import API_ROUTES from '../api-routes'
+import { tokenUtils } from '../utils/tokenUtils'
 import type { AxiosInstance } from 'axios'
 import type { Router } from 'vue-router'
 
@@ -8,27 +9,33 @@ export const handleLogout = async (apiClient: AxiosInstance, router: Router) => 
       console.warn('localStorage no está disponible en el servidor.')
       return
     }
-    const access_token = localStorage.getItem('access_token')
+    
+    // Obtener token usando utilidad centralizada
+    const accessToken = tokenUtils.getToken()
 
-    if (!access_token) {
-      alert('No estás autenticado.')
-      return
+    if (accessToken) {
+      // Intentar hacer logout en el servidor
+      try {
+        await apiClient.post(`${API_ROUTES.AUTH}/logout`)
+        console.log('✅ Logout exitoso en el servidor')
+      } catch (error) {
+        console.warn('⚠️ Error en logout del servidor, pero continuando con limpieza local:', error)
+      }
     }
 
-    await apiClient.post(API_ROUTES.LOGOUT, null, {
-      headers: {
-        Authorization: `Bearer ${access_token}`
-      }
-    })
-
-    // Limpiar el token del almacenamiento local
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    alert('Sesión cerrada exitosamente.')
-    router.push('/login') // Redirigir al login
+    // Siempre limpiar datos locales, independientemente del resultado del servidor
+    tokenUtils.clearAuth()
+    
+    console.log('✅ Sesión cerrada localmente')
+    
+    // Redirigir a la landing page
+    router.push('/landing')
+    
   } catch (error) {
     console.error('Error al cerrar sesión:', error)
-    alert("Error al cerrar sesión: ")
-    return false;
+    
+    // Aunque haya error, limpiar datos locales
+    tokenUtils.clearAuth()
+    router.push('/landing')
   }
 }

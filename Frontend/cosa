@@ -1,0 +1,1077 @@
+@RestController
+@RequestMapping("/calificacion")
+@CrossOrigin
+public class CalificacionController {
+
+    @Autowired
+    private CalificacionService calificacionService;
+
+    @GetMapping("/")
+    public List<CalificacionEntity> obtenerTodas() {
+        return calificacionService.findAll();
+    }
+
+    @PostMapping("/crear")
+    public ResponseEntity<CalificacionEntity> crear(@RequestBody CalificacionEntity calificacion) {
+        CalificacionEntity creada = calificacionService.crear(calificacion);
+        return ResponseEntity.ok(creada);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> actualizar(@RequestBody CalificacionEntity calificacion, @PathVariable Integer id) {
+        boolean actualizada = calificacionService.update(calificacion, id);
+        if (actualizada) {
+            return ResponseEntity.ok("Calificación actualizada correctamente.");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+        calificacionService.delete(id);
+        return ResponseEntity.ok("Calificación eliminada.");
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+
+@RestController
+@RequestMapping("/categoria")
+@CrossOrigin
+
+public class CategoriaController {
+
+    @Autowired
+    private CategoriaService categoriaService;
+
+    @PostMapping("/crear")
+    public ResponseEntity<CategoriaEntity> crearCategoria(@RequestBody CategoriaEntity categoria) {
+        CategoriaEntity creada = categoriaService.crearCategoria(categoria);
+        return ResponseEntity.ok(creada);
+    }
+
+    @GetMapping("/")
+    public List<CategoriaEntity> obtenerCategorias() {
+        return categoriaService.obtenerCategorias();
+    }
+
+    @DeleteMapping("/eliminar/{id_categoria}")
+    public void eliminarCategoria(@PathVariable Long id_categoria) {
+        categoriaService.eliminarCategoria(id_categoria);
+    }
+
+    @PutMapping("/actualizar/{id_categoria}")
+    public void actualizarCategoria(@PathVariable Long id_categoria, @RequestBody CategoriaEntity categoria) {
+        categoriaService.actualizarCategoria(id_categoria, categoria);
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/cliente")
+public class ClienteController {
+
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
+    }
+
+    @Autowired
+    private final ClienteService clienteService;
+
+    @GetMapping("/con-mas-gasto")
+    public ClienteEntity obtenerClienteConMasGasto() {
+        return clienteService.idClienteTopGasto();
+    }
+
+    @GetMapping("/")
+    public List<Map<String, Object>> obtenerClientes() {
+        return clienteService.obtenerClientes();
+    }
+
+    @GetMapping("/correo")
+    public ClienteEntity obtenerClientePorCorreo(@RequestParam String correo) {
+        return clienteService.findByCorreo(correo);
+    }
+
+    @DeleteMapping("/eliminar/{id_cliente}")
+    public void eliminarCliente(@PathVariable Long id_cliente) {
+        clienteService.delete(id_cliente);
+    }
+
+    @GetMapping("/en-zona/{idZona}")
+    public ResponseEntity<List<Map<String, Object>>> verificarClientesEnZona(@PathVariable Long idZona) {
+        return ResponseEntity.ok(clienteService.verificarClientesEnZona(idZona));
+    }
+
+    @GetMapping("/zona-de-cliente/{idCliente}")
+    public ResponseEntity<Map<String, Object>> obtenerZonaDeCliente(@PathVariable Long idCliente) {
+        return ResponseEntity.ok(clienteService.obtenerZonaDeCliente(idCliente));
+    }
+
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/detallePedido")
+@CrossOrigin
+public class DetallePedidoController {
+
+    @Autowired
+    private DetallePedidoService detallePedidoService;
+
+    @GetMapping("/")
+    public List<DetallePedidoEntity> getAll() {
+        return detallePedidoService.getAll();
+    }
+
+    @PutMapping("/update")
+    public boolean update(@RequestBody DetallePedidoEntity detalle) {
+        return detallePedidoService.update(detalle);
+    }
+
+    @GetMapping("/{id}")
+    public DetallePedidoEntity obtenerDetallePedidoPorId(@RequestParam Long id) {
+        return detallePedidoService.obtenerDetallePedidoPorId(id);
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public void eliminarDetallePedido(@PathVariable Long id) {
+        detallePedidoService.eliminarDetallePedido(id);
+    }
+}
+
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/empresaAsociada")
+@CrossOrigin
+public class EmpresaAsociadaController {
+
+    public EmpresaAsociadaController(EmpresaAsociadaService empresaAsociadaService) {
+        this.empresaAsociadaService = empresaAsociadaService;
+    }
+
+    @Autowired
+    private final EmpresaAsociadaService empresaAsociadaService;
+
+    @GetMapping("/entregas-fallidas")
+    public List<Map<String, Object>> obtenerEntregasFallidasPorEmpresa(){
+        return empresaAsociadaService.obtenerEntregasFallidasPorEmpresa();
+    }
+    @GetMapping("/top-volumen")
+    public List<Map<String, Object>> obtenerEmpresasConMasEntregas() {
+        return empresaAsociadaService.obtenerEntregasExitosasPorEmpresa();
+    }
+
+    @GetMapping("/pedido-mas-lejano")
+    public ResponseEntity<List<Map<String, Object>>> obtenerPedidoMasLejano() {
+        return ResponseEntity.ok(empresaAsociadaService.obtenerPedidoMasLejanoPorEmpresa());
+    }
+
+    @GetMapping("/clientes-sin-empresa-cercana")
+    public List<Map<String, Object>> obtenerClientesSinEmpresaCercana() {
+        return empresaAsociadaService.obtenerClientesSinEmpresaCercana();
+    }
+
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/historial-repartidores")
+@CrossOrigin
+public class HistorialRepartidoresController {
+
+    @Autowired
+    HistorialRepartidoresService historialRepartidoresService;
+
+    @GetMapping("/tramos-frecuentes-ultimos-7-dias")
+    public Object tramosFrecuentesUltimos7Dias() {
+        return historialRepartidoresService.tramosFrecuentesUltimos7Dias();
+    }
+}
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/logs")
+public class LogsPedidosController {
+
+    private final LogsPedidosService logsPedidosService;
+
+    @Autowired
+    public LogsPedidosController(LogsPedidosService logsPedidosService) {
+        this.logsPedidosService = logsPedidosService;
+    }
+
+    @GetMapping("/cambios-rapidos")
+    public long contarPedidosRapidos() {
+        return logsPedidosService.obtenerCantidadDePedidosConCambiosRapidos();
+    }
+}
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/mediopago")
+@CrossOrigin
+
+public class MedioPagoController {
+
+    @Autowired
+    private MedioPagoService medioPagoService;
+
+    @PostMapping("/create")
+    public ResponseEntity<MedioPagoEntity> crearMedioPago(@RequestBody MedioPagoEntity medioPago) {
+        MedioPagoEntity nuevoMedioPago = medioPagoService.crearMedioPago(medioPago);
+        return ResponseEntity.ok(nuevoMedioPago);
+    }
+
+    @GetMapping("/")
+    public List<MedioPagoEntity> obtenerTodosLosMediosPago() {
+        return medioPagoService.obtenerTodosLosMediosPago();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void eliminarMedioPago(@PathVariable Long id) {
+        medioPagoService.eliminarMedioPago(id);
+    }
+
+    @PutMapping("/update/{id}")
+    public void actualizarMedioPago(@PathVariable Long id, @RequestBody MedioPagoEntity medioPago) {
+        medioPagoService.actualizarMedioPago(id, medioPago);
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/navegacion")
+public class NavegacionUsuariosController {
+
+    private final NavegacionUsuariosService navegacionUsuariosService;
+
+    @Autowired
+    public NavegacionUsuariosController(NavegacionUsuariosService navegacionUsuariosService) {
+        this.navegacionUsuariosService = navegacionUsuariosService;
+    }
+
+    @GetMapping("/sin-pedido")
+    public List<Integer> obtenerClientesQueBuscaronPeroNoCompraron() {
+        return navegacionUsuariosService.obtenerClientesQueBuscaronPeroNoCompraron();
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/opiniones-clientes")
+@CrossOrigin
+
+public class OpinionesClientesController {
+
+    @Autowired
+    OpinionesClientesService opinionesClientesService;
+
+
+    @GetMapping("/hora-dia")
+    public List<Document> obtenerOpinionesPorHoraDelDia() {
+        return opinionesClientesService.opinionesPorHoraDelDia();
+    }
+
+    @GetMapping("/promedio-empresa")
+    public List<Document> obtenerPromedioPuntuacionPorEmpresa() {
+        return opinionesClientesService.promedioPuntuacionPorEmpresa();
+    }
+
+    @GetMapping("/problemas-detectados")
+    public List<Document> obtenerOpinionesConProblemasDetectados() {
+        return opinionesClientesService.opinionesConProblemasDetectados();
+    }
+
+}
+//------------------------------------------------------------------------------------------------  
+@RestController
+@RequestMapping("/pedido")
+@CrossOrigin
+public class PedidoController {
+
+    public PedidoController(PedidoService pedidoService) {
+        this.pedidoService = pedidoService;
+    }
+
+    @Autowired
+    private final PedidoService pedidoService;
+
+    @GetMapping("/mas-pedidos-por-categoria")
+    public List<Map<String, Object>> obtenerMasPedidosPorCategoriaUltimoMes() {
+        return pedidoService.obtenerMasPedidosPorCategoriaUltimoMes();
+    }
+
+    @GetMapping("/tiempos-promedio-entrega")
+    public List<Map<String, Object>> obtenerTiemposPromedioEntrega() {
+        return pedidoService.obtenerTiemposPromedioEntrega();
+    }
+
+    @GetMapping("/pedidos-multiples-zonas")
+    public List<Map<String, Object>> obtenerPedidosQueCruzanMultiplesZonas() {
+        return pedidoService.obtenerPedidosQueCruzanMultiplesZonas();
+    }
+    @PostMapping("/crear")
+    public ResponseEntity<Long> crearPedido(@RequestBody Map<String, Object> body) {
+        Long idUrgencia   = ((Number) body.get("idUrgencia")).longValue();
+        Long idRepartidor = ((Number) body.get("idRepartidor")).longValue();
+        Long idCliente    = ((Number) body.get("idCliente")).longValue();
+        Long idMedioPago  = ((Number) body.get("idMedioPago")).longValue();
+        String ubicacionEntrega = (String) body.get("ubicacionEntrega");
+        String rutaEstimada     = (String) body.get("rutaEstimada");
+
+        @SuppressWarnings("unchecked")
+        List<Number> productosRaw = (List<Number>) body.get("productos");
+        List<Long> productos = productosRaw.stream().map(Number::longValue).toList();
+
+        @SuppressWarnings("unchecked")
+        List<Number> cantidadesRaw = (List<Number>) body.get("cantidades");
+        List<Integer> cantidades = cantidadesRaw.stream().map(Number::intValue).toList();
+
+        Long idPedido = pedidoService.registrarPedidoConProductos(
+                idUrgencia, idRepartidor, idCliente, idMedioPago,
+                ubicacionEntrega, rutaEstimada, productos, cantidades);
+
+        return ResponseEntity.ok(idPedido);
+    }
+
+    @PostMapping("/confirmar")
+    public ResponseEntity<String> confirmarPedido(@RequestBody Map<String, Object> body) {
+        Long idPedido = ((Number) body.get("idPedido")).longValue();
+        pedidoService.confirmarPedido(idPedido);
+        return ResponseEntity.ok("Pedido confirmado");
+    }
+
+    @PostMapping("/cambiar-estado")
+    public ResponseEntity<Long> cambiarEstado(@RequestBody Map<String, Object> body) {
+        Long idPedido = ((Number) body.get("idPedido")).longValue();
+        boolean nuevoEstado = (boolean) body.get("nuevoEstado");
+
+        boolean resultado = pedidoService.cambiarEstadoPedidoPorFuncion(idPedido, nuevoEstado);
+
+        return ResponseEntity.ok(resultado ? idPedido : -1L);
+    }
+
+    @GetMapping("/")
+    public List<Map<String, Object>> obtenerTodosLosPedidos() {
+        return pedidoService.obtenerTodosLosPedidos();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> actualizarPedido(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
+        pedidoService.actualizarPedido(id, campos);
+        return ResponseEntity.ok("Pedido actualizado correctamente");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminarPedido(@PathVariable Long id) {
+        pedidoService.eliminarPedido(id);
+        return ResponseEntity.ok("Pedido eliminado correctamente");
+    }
+
+    @GetMapping("/cercanos-a-empresa/{idEmpresa}")
+    public ResponseEntity<List<Map<String, Object>>> obtenerPedidosMasCercanosAEmpresa(@PathVariable Long idEmpresa) {
+        List<Map<String, Object>> pedidos = pedidoService.obtenerPedidosMasCercanosAEmpresa(idEmpresa);
+        return ResponseEntity.ok(pedidos);
+    }
+
+    @GetMapping("/cercanos")
+    public List<Map<String, Object>> obtenerPuntosCercanos(
+            @RequestParam Long idCliente,
+            @RequestParam(defaultValue = "1000") double radio) {
+        return pedidoService.obtenerPuntosInteres(idCliente, radio);
+    }
+}
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/pedidoProducto")
+@CrossOrigin
+
+
+public class PedidoProductoController {
+
+    public PedidoProductoController(PedidoProductoService pedidoProductoService) {
+        this.pedidoProductoService = pedidoProductoService;
+    }
+
+    @Autowired
+    private final PedidoProductoService pedidoProductoService;
+
+    @GetMapping("/{id}")
+    public List<PedidoProductoEntity> obtenerPedidoProductoPorId(@RequestParam Long id) {
+        return pedidoProductoService.obtenerPedidoProductoPorId(id);
+    }
+
+}
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/productoServicio")
+@CrossOrigin
+
+public class ProductoServicioController {
+
+    public ProductoServicioController(ProductoServicioService productoServicioService) {
+        this.productoServicioService = productoServicioService;
+    }
+
+    @Autowired
+    private final ProductoServicioService productoServicioService;
+
+    // Metodo para obtener el detalle de un producto a partir de su id
+    @GetMapping("/{id}")
+    public ProductoServicioEntity obtenerProductoServicioPorId(@RequestParam Long id) {
+        return productoServicioService.obtenerProductoServicioPorId(id);
+    }
+
+    // Obtener todos los productos/servicios
+    @GetMapping("/")
+    public List<ProductoServicioEntity> obtenerTodos() {
+        return productoServicioService.obtenerTodos();
+    }
+
+    // Actualizar un producto/servicio
+    @PutMapping("/{id}")
+    public void actualizarProductoServicio(@PathVariable Long id, @RequestBody ProductoServicioEntity productoServicio) {
+        productoServicioService.actualizarProductoServicio(id, productoServicio);
+    }
+
+    // Eliminar un producto/servicio
+    @DeleteMapping("/{id}")
+    public void eliminarProductoServicio(@PathVariable Long id) {
+        productoServicioService.eliminarProductoServicio(id);
+    }
+}
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/repartidor")
+@CrossOrigin
+
+public class RepartidorController {
+    @Autowired
+    private RepartidorService repartidorService;
+
+    @GetMapping("/top-3")
+    public List<Map<String, Object>> obtenerTop3Repartidores() {
+        return repartidorService.obtenerTop3Repartidores();
+    }
+
+    @GetMapping("/desempenios")
+    public List<Map<String, Object>> obtenerDesempenoPorRepartidor() {
+        return repartidorService.obtenerDesempenoPorRepartidor();
+    }
+    @GetMapping("/distancia-recorrida")
+    public List<Map<String, Object>> obtenerDistanciaRecorridaUltimoMes() {
+        return repartidorService.obtenerDistanciaRecorridaUltimoMes();
+    }
+
+    @GetMapping("/")
+    public List<Map<String, Object>> obtenerTodos() {
+        return repartidorService.obtenerTodos();
+    }
+
+    @PutMapping("/actualizar")
+    public void actualizarRepartidor(@RequestBody RepartidorEntity repartidor) {
+        repartidorService.update(repartidor);
+    }
+
+    @PostMapping("/crear")
+    public void crearRepartidor(@RequestBody RepartidorEntity repartidor) {
+        repartidorService.crearRepartidor(repartidor);
+    }
+}
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/auth")
+public class TokenController {
+
+    public TokenController(TokenSevice tokenSevice) {
+        this.tokenSevice = tokenSevice;
+    }
+
+    private final TokenSevice tokenSevice;
+
+    @PostMapping("/registrar")
+    public ResponseEntity<TokenResponse> registrarCliente(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(tokenSevice.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponse> loginCliente(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(tokenSevice.login(request));
+    }
+
+    @PostMapping("/refresh")
+    public TokenResponse refreshToken(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) final String authentication
+    ) {
+        return tokenSevice.refreshToken(authentication);
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/urgencia")
+@CrossOrigin
+
+public class UrgenciaController {
+    @Autowired
+    private UrgenciaService urgenciaService;
+
+    @GetMapping("/medio-pago-mas-usado")
+    public List<Map<String, Object>> obtenerMedioPagoMasUsadoEnUrgenciasAltas() {
+        return urgenciaService.obtenerMedioPagoMasUsadoEnUrgenciasAltas();
+    }
+
+    // Crear una nueva urgencia
+    @PostMapping("/crear")
+    public void createUrgencia(@RequestBody UrgenciaEntity urgencia) {
+        urgenciaService.createUrgencia(urgencia);
+    }
+
+    // Actualizar una urgencia existente
+    @PutMapping("/actualizar/{id}")
+    public void updateUrgencia(@PathVariable("id") Long idUrgencia, @RequestBody UrgenciaEntity urgencia) {
+        urgencia.setId_urgencia(idUrgencia); // Asegurarse de que el id se pase correctamente
+        urgenciaService.updateUrgencia(urgencia);
+    }
+
+    // Obtener todas las urgencias
+    @GetMapping("/")
+    public List<UrgenciaEntity> getAllUrgencias() {
+        return urgenciaService.getAllUrgencias();
+    }
+
+    // Eliminar una urgencia
+    @DeleteMapping("/eliminar/{id}")
+    public void deleteUrgencia(@PathVariable("id") Long idUrgencia) {
+        urgenciaService.deleteUrgencia(idUrgencia);
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+@RestController
+@RequestMapping("/zonaCobertura")
+@CrossOrigin
+
+public class ZonaCoberturaController {
+
+    @Autowired
+    ZonaCoberturaService zonaCoberturaService;
+
+    @GetMapping("/alta-densidad")
+    public List<Map<String, Object>> obtenerZonasConAltaDensidad() {
+        return zonaCoberturaService.obtenerZonasConAltaDensidad();
+    }
+}
+//------------------------------------------------------------------------------------------------
+
+//estructuras que antes no estaban:
+//HisotrialRepartidoresRepository.java
+
+public class HistorialRepartidoresRepository {
+
+    private final MongoTemplate mongoTemplate;
+
+    @Autowired
+    public HistorialRepartidoresRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public List<Document> tramosFrecuentesUltimos7Dias() {
+        AggregationOperation unwindRutas = context -> new Document("$unwind", "$rutas");
+
+        AggregationOperation matchUltimos7Dias = context -> new Document("$match", new Document("$expr",
+                new Document("$gte", Arrays.asList(
+                        new Document("$dateFromString", new Document("dateString", "$rutas.timestamp")),
+                        new Document("$dateSubtract", new Document("startDate", "$$NOW")
+                                .append("unit", "day")
+                                .append("amount", 7))
+                ))
+        ));
+
+        AggregationOperation groupPorRepartidor = context -> new Document("$group", new Document("_id", "$_id")
+                .append("repartidor_id", new Document("$first", "$repartidor_id"))
+                .append("rutas", new Document("$push", "$rutas"))
+        );
+
+        AggregationOperation construirTramos = context -> new Document("$project", new Document("repartidor_id", 1)
+                .append("tramos", new Document("$map", new Document()
+                        .append("input", new Document("$range", Arrays.asList(
+                                0,
+                                new Document("$subtract", Arrays.asList(new Document("$size", "$rutas"), 1))
+                        )))
+                        .append("as", "i")
+                        .append("in", new Document()
+                                .append("origen", new Document()
+                                        .append("lat", new Document("$arrayElemAt", Arrays.asList("$rutas.lat", "$$i")))
+                                        .append("lng", new Document("$arrayElemAt", Arrays.asList("$rutas.lng", "$$i")))
+                                )
+                                .append("destino", new Document()
+                                        .append("lat", new Document("$arrayElemAt", Arrays.asList("$rutas.lat", new Document("$add", Arrays.asList("$$i", 1)))))
+                                        .append("lng", new Document("$arrayElemAt", Arrays.asList("$rutas.lng", new Document("$add", Arrays.asList("$$i", 1)))))
+                                )
+                        )
+                ))
+        );
+
+        AggregationOperation unwindTramos = context -> new Document("$unwind", "$tramos");
+
+        AggregationOperation groupFrecuencia = context -> new Document("$group", new Document("_id", new Document()
+                .append("origen", "$tramos.origen")
+                .append("destino", "$tramos.destino"))
+                .append("frecuencia", new Document("$sum", 1))
+        );
+
+        AggregationOperation sortYLimit = context -> new Document("$sort", new Document("frecuencia", -1));
+        AggregationOperation limitTop10 = context -> new Document("$limit", 10);
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                unwindRutas,
+                matchUltimos7Dias,
+                groupPorRepartidor,
+                construirTramos,
+                unwindTramos,
+                groupFrecuencia,
+                sortYLimit,
+                limitTop10
+        );
+
+        return mongoTemplate.aggregate(aggregation, "historial_repartidores", Document.class).getMappedResults();
+    }
+}
+
+//Service:
+
+@Service
+public class HistorialRepartidoresService {
+
+    private final HistorialRepartidoresRepository historialRepartidoresRepository;
+
+    @Autowired
+    public HistorialRepartidoresService(HistorialRepartidoresRepository historialRepartidoresRepository) {
+        this.historialRepartidoresRepository = historialRepartidoresRepository;
+    }
+
+    public List<Document> tramosFrecuentesUltimos7Dias() {
+        return historialRepartidoresRepository.tramosFrecuentesUltimos7Dias();
+    }
+
+}
+
+//entidad:
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
+
+@Document("historial_repartidores")
+public class HistorialRepartidoresEntity {
+    @Id
+    private String id;
+    private int repartidor_id;
+    private List<Ruta> rutas;
+    public static class Ruta {
+        private double lat;
+        private double lng;
+        private String timestamp;
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+//LogsPedidosService.java
+
+@Service
+public class LogsPedidosService {
+
+    private final LogsPedidosRepositoryImp logsPedidosRepository;
+
+    @Autowired
+    public LogsPedidosService(LogsPedidosRepositoryImp logsPedidosRepository) {
+        this.logsPedidosRepository = logsPedidosRepository;
+    }
+
+    public long obtenerCantidadDePedidosConCambiosRapidos() {
+        return logsPedidosRepository.contarPedidosConCambiosRapidos();
+    }
+}
+
+//Repository:
+@Repository
+public class LogsPedidosRepositoryImp {
+
+    private final MongoTemplate mongoTemplate;
+
+    @Autowired
+    public LogsPedidosRepositoryImp(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public long contarPedidosConCambiosRapidos() {
+        Document functionStage = new Document("$addFields",
+                new Document("cumple_rapido",
+                        new Document("$function", new Document()
+                                .append("body", "function(eventos) {" +
+                                        "if (!eventos || eventos.length < 4) return false;" +
+                                        "eventos = eventos.map(e => new Date(e.timestamp));" +
+                                        "for (let i = 0; i <= eventos.length - 4; i++) {" +
+                                        "  let inicio = eventos[i];" +
+                                        "  let fin = eventos[i + 3];" +
+                                        "  let diffMin = (fin - inicio) / (1000 * 60);" +
+                                        "  if (diffMin <= 10) return true;" +
+                                        "}" +
+                                        "return false;" +
+                                        "}")
+                                .append("args", List.of("$eventos"))
+                                .append("lang", "js")
+                        )
+                )
+        );
+
+        AggregationOperation matchStage = context -> new Document("$match", new Document("cumple_rapido", true));
+
+        AggregationOperation countStage = context -> new Document("$count", "pedidos_con_cambios_rapidos");
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                context -> functionStage,
+                matchStage,
+                countStage
+        );
+
+        AggregationResults<Document> result = mongoTemplate.aggregate(aggregation, "logs_pedidos", Document.class);
+        Document doc = result.getUniqueMappedResult();
+
+        return doc != null ? doc.getInteger("pedidos_con_cambios_rapidos").longValue() : 0;
+    }
+}
+
+//Entity:
+@Document("logs_pedidos")
+public class LogsPedidosEntity {
+    @Id
+    private String id;
+    private int pedido_id;
+    private List<Evento> eventos;
+    public static class Evento {
+        private String estado;
+        private String timestamp;
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+//NavegacionUsuariosService.java
+@Service
+public class NavegacionUsuariosService {
+
+    private final NavegacionUsuariosRepositoryImp navegacionUsuariosRepository;
+
+    @Autowired
+    public NavegacionUsuariosService(NavegacionUsuariosRepositoryImp navegacionUsuariosRepository) {
+        this.navegacionUsuariosRepository = navegacionUsuariosRepository;
+    }
+
+    public List<Integer> obtenerClientesQueBuscaronPeroNoCompraron() {
+        return navegacionUsuariosRepository.obtenerClientesQueBuscaronPeroNoCompraron();
+    }
+}
+
+//NavegacionUsuariosRepositoryImp.java
+@Repository
+public class NavegacionUsuariosRepositoryImp {
+
+    private final MongoTemplate mongoTemplate;
+
+    @Autowired
+    public NavegacionUsuariosRepositoryImp(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+    public List<Integer> obtenerClientesQueBuscaronPeroNoCompraron() {
+        // 1. Filtrar clientes que tienen al menos un evento de tipo "busqueda"
+        AggregationOperation matchBusqueda = context -> new Document("$match",
+                new Document("eventos", new Document("$elemMatch", new Document("tipo", "busqueda")))
+        );
+
+        // 2. Añadir campo "tiene_pedido_confirmado": ¿existe algún evento con tipo = "pedido" y valor = "confirmar"?
+        AggregationOperation addTienePedidoConfirmado = context -> new Document("$addFields",
+                new Document("tiene_pedido_confirmado",
+                        new Document("$anyElementTrue", List.of(
+                                new Document("$map", new Document()
+                                        .append("input", "$eventos")
+                                        .append("as", "e")
+                                        .append("in", new Document("$and", List.of(
+                                                new Document("$eq", List.of("$$e.tipo", "pedido")),
+                                                new Document("$eq", List.of("$$e.valor", "confirmar"))
+                                        )))
+                                )
+                        ))
+                )
+        );
+
+        // 3. Filtrar los que NO tienen pedidos confirmados
+        AggregationOperation matchSinPedidoConfirmado = context -> new Document("$match",
+                new Document("tiene_pedido_confirmado", false)
+        );
+
+        // 4. Proyectar solo el cliente_id
+        AggregationOperation projectClienteId = context -> new Document("$project",
+                new Document("cliente_id", 1).append("_id", 0)
+        );
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchBusqueda,
+                addTienePedidoConfirmado,
+                matchSinPedidoConfirmado,
+                projectClienteId
+        );
+
+        AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "navegacion_usuarios", Document.class);
+
+        return results.getMappedResults().stream()
+                .map(doc -> doc.getInteger("cliente_id"))
+                .toList();
+    }
+
+}
+
+//NavegacionUsuariosEntity.java
+@Document("navegacion_usuarios")
+public class NavegacionUsuariosEntity {
+    @Id
+    private String id;
+    private int cliente_id;
+    private List<EventoNavegacion> eventos;
+    public static class EventoNavegacion {
+        private String tipo;
+        private String valor;
+        private Instant timestamp;
+    }
+}
+
+//------------------------------------------------------------------------------------------------
+//OpinionesClientesService.java
+@Service
+public class OpinionesClientesService {
+
+    private final OpinionesClientesRepository opinionesClientesRepository;
+
+    @Autowired
+    public OpinionesClientesService(OpinionesClientesRepository opinionesClientesRepository) {
+        this.opinionesClientesRepository = opinionesClientesRepository;
+    }
+
+    public List<Document> opinionesPorHoraDelDia() {
+        return opinionesClientesRepository.opinionesPorHoraDelDia();
+    }
+
+    public List<Document> promedioPuntuacionPorEmpresa() {
+        return opinionesClientesRepository.promedioPuntuacionPorEmpresa();
+    }
+    public List<Document> opinionesConProblemasDetectados() {
+        return opinionesClientesRepository.opinionesConProblemasDetectados();
+    }
+}
+
+//OpinionesClientesRepository.java
+@Repository
+public class OpinionesClientesRepository {
+
+    private final MongoTemplate mongoTemplate;
+
+    @Autowired
+    public OpinionesClientesRepository(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
+
+    public List<Document> opinionesPorHoraDelDia() {
+        AggregationOperation addFields = context -> new Document("$addFields",
+                new Document("hora_dia",
+                        new Document("$hour", new Document("date", new Document("$toDate", "$fecha"))
+                                .append("timezone", "America/Santiago")
+                        )
+                )
+        );
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                addFields,
+                Aggregation.group("hora_dia")
+                        .count().as("total_opiniones")
+                        .avg("puntuacion").as("promedio_puntuacion")
+                        .push("comentario").as("comentarios"),
+                Aggregation.sort(Sort.by("_id"))
+        );
+
+        return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
+    }
+
+    public List<Document> promedioPuntuacionPorEmpresa() {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group("empresa_id")
+                        .avg("puntuacion").as("promedio_puntuacion")
+                        .count().as("total_opiniones"),
+                Aggregation.sort(Sort.by("_id"))
+        );
+
+        return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
+    }
+
+    public List<Document> opinionesConProblemasDetectados() {
+        // Expresión regular que detecta variantes, sinónimos y errores comunes de escritura
+        String regexProblemas = "(?i)(demora|demoro|demor[óo]|tardanza|retardo|espera|error|errores|err[oó]r|conflicto|fall[oó]s?)";
+
+        AggregationOperation matchProblemas = context -> new Document("$match",
+                new Document("comentario", new Document("$regex", regexProblemas))
+        );
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchProblemas,
+                Aggregation.project("cliente_id", "empresa_id", "comentario", "puntuacion", "fecha")
+        );
+
+        return mongoTemplate.aggregate(aggregation, "opiniones_clientes", Document.class).getMappedResults();
+    }
+
+}
+
+
+//OpinionesClientesEntity.java
+@Document("opiniones_clientes")
+public class OpinionesClientesEntity {
+    @Id
+    private String id;
+    private int cliente_id;
+    private int empresa_id;
+    private String comentario;
+    private int puntuacion;
+    private String fecha;
+}
+
+
+//------------------------------------------------------------------------------------------------
+
+//Seguridad Backend:
+
+
+// SecurityConfig.java:
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, AuthenticationProvider authenticationProvider) {
+        this.jwtAuthFilter = jwtAuthFilter;
+        this.authenticationProvider = authenticationProvider;
+    }
+
+    private final JwtAuthFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults()) // Enable CORS
+                .authorizeHttpRequests(req ->
+                        req.requestMatchers("/auth/**")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout ->
+                        logout.logoutUrl("/auth/logout")
+                                .logoutSuccessHandler((request, response, authentication) ->{
+
+                                        SecurityContextHolder.clearContext();
+                                })
+                );
+        return http.build();
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}
+
+//auth filter:
+package delivery.demo.config;
+
+import delivery.demo.services.JwtService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+    }
+    
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String jwt;
+        final String userEmail;
+
+        if (request.getServletPath().contains("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        jwt = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(jwt);
+
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+            if (jwtService.isTokenValid(jwt)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}
+
